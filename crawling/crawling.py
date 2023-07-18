@@ -16,3 +16,4 @@ soup = bs(html_text, 'html.parser')
 
 news_title = soup.select_one('div.sh_text>a')
 print(news_title.text)
+
