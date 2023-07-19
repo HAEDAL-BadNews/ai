@@ -7,28 +7,29 @@ model_name = "csebuetnlp/mT5_multilingual_XLSum"
 tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
 model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 
-article_text = input("기사 본문 입력 > ")
+def summarize_context(article_text):
 
-input_ids = tokenizer(
-    [WHITESPACE_HANDLER(article_text)],
-    return_tensors="pt",
-    padding="max_length",
-    truncation=True,
-    max_length=512
-)["input_ids"]
+    input_ids = tokenizer(
+        [WHITESPACE_HANDLER(article_text)],
+        return_tensors="pt",
+        padding="max_length",
+        truncation=True,
+        max_length=512
+    )["input_ids"]
 
 
-output_ids = model.generate(
-    input_ids=input_ids,
-    max_length=256,
-    no_repeat_ngram_size=2,
-    num_beams=4
-)[0]
+    output_ids = model.generate(
+        input_ids=input_ids,
+        max_length=256,
+        no_repeat_ngram_size=2,
+        num_beams=4
+    )[0]
 
-summary = tokenizer.decode(
-    output_ids,
-    skip_special_tokens=True,
-    clean_up_tokenization_spaces=False
-)
+    summary = tokenizer.decode(
+        output_ids,
+        skip_special_tokens=True,
+        clean_up_tokenization_spaces=False
+    )
 
-print(summary)
+    #print(summary)
+    return summary
