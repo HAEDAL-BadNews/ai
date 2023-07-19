@@ -15,13 +15,12 @@ class ResponseBody(BaseModel):
     date:str
     category:str
     userId:str
-    #keyword:str[3]
-    
+
 
 class RequestBody(BaseModel):
     userId:str
     category:str
-    sort:str
+
 
 
 @app.post("/article/save", response_model=ResponseBody)

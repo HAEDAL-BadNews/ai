@@ -52,15 +52,17 @@ def get_articles():
 
         news_date = soup.select_one(
             'span._ARTICLE_DATE_TIME').attrs['data-date-time']
-        news[i]['date'] = news_date
+        
+        news[i]['date'] = news_date[0:10]
 
         news_content = soup.select_one('#dic_area').text
         news_content = summarize_context(news_content)
         news[i]['context'] = news_content
-        # print(news[i])
+        print(news[i])
+        return(news[i])
         # text 긁어와도 요약에 문제없음
 
     
-    return news
+    #return news
 
 get_articles()
