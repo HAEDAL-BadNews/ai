@@ -36,7 +36,7 @@ def get_articles():
     for i in range(len):
         news_object = {
             'title': news_titles[i].text,
-            'href': news_titles[i].attrs['href'],
+            'url': news_titles[i].attrs['href'],
             'author': news_authors[i].text,
             'category': category_dict[category_code],
         }
@@ -45,7 +45,7 @@ def get_articles():
 
     # 각 기사 페이지 접근
     for i in range(len):
-        base_url = news[i]['href']
+        base_url = news[i]['url']
         response = requests.get(base_url, headers=headers)
         html_text = response.text
         soup = bs(html_text, 'html.parser')
@@ -56,11 +56,11 @@ def get_articles():
 
         news_content = soup.select_one('#dic_area').text
         news_content = summarize_context(news_content)
-        news[i]['content'] = news_content
+        news[i]['context'] = news_content
+        # print(news[i])
         # text 긁어와도 요약에 문제없음
 
-    print(news)
+    
     return news
 
-if __name__ == '__main__':
-    get_articles()
+get_articles()
