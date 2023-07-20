@@ -16,7 +16,7 @@ class ResponseBody(BaseModel):
     date:str
     category:str
     userId:str
-    keyword:list = []
+    keywords:list = []
 
 
 class RequestBody(BaseModel):

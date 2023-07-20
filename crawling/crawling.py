@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup as bs
 import sys, os
-import crawling.keyword_naitive
+import crawling.keyword_naitive as keyword_naitive
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from summarize.huggingface import summarize_context
 
@@ -24,8 +24,7 @@ category_dict = {
 def get_articles(category: str):
     base_url = "https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1="
 
-    #category_code = category_dict[category]
-    category_code = '100'
+    category_code = category_dict[category]
     response = requests.get(f"{base_url}{category_code}", headers=headers)
     html_text = response.text
     soup = bs(html_text, 'html.parser')
@@ -43,8 +42,11 @@ def get_articles(category: str):
         }
         news.append(news_object)
 
+
     print("페이지 기사 얻어오기")
     # 각 기사 페이지 접근
+    driver = keyword_naitive.init_keyword_naitive()
+    
     for i in range(len):
         base_url = news[i]['url']
         response = requests.get(base_url, headers=headers)
@@ -60,29 +62,26 @@ def get_articles(category: str):
         print(f"요약{i}")
         news_content = summarize_context(news_content)
         news[i]['context'] = news_content
-        #print(news[i])
+
 
         #수정필요
-        news[i]['keyword'] = ['파이썬','자바','코틀린']
+        news[i]['keywords'] = ['파이썬','자바','코틀린']
+        keyword_text = keyword_naitive.get_keyword_naitive(driver, news[i]['context'])
+        keyword = keyword_text.split(',')
+        news[i]['keywords'] = keyword[:5]
+
+        
         return(news[i])
 
 
     # 키워드
-    driver = crawling.keyword_naitive.init_keyword_naitive()
-    for i in range(len):
-        keyword_text = crawling.keyword_naitive.get_keyword_naitive(driver, news[i]['context'])
-        keyword = keyword_text.split(',')
-        news[i]['keyword'] = keyword[:5]
-    crawling.keyword_naitive.quit_keyword_naitive(driver)
+    keyword_naitive.quit_keyword_naitive(driver)
 
     
-    '''
-    test
-    '''
     for i in range(len):
         print(news[i])
         print()
     
-    #return news[0]
+    return news[0]
 
-get_articles('IT/과학')
+#get_articles("정치")
