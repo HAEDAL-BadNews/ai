@@ -1,6 +1,6 @@
 from fastapi import FastAPI, UploadFile
 from pydantic import BaseModel
-from starlette.responses import JSONResponse,FileResponse
+from starlette.responses import JSONResponse,FileResponse,Response
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from crawling.crawling import get_articles
@@ -16,6 +16,7 @@ class ResponseBody(BaseModel):
     date:str
     category:str
     userId:str
+    keywords:list = []
 
 
 class RequestBody(BaseModel):
@@ -37,10 +38,10 @@ async def post_articles(requestBody: RequestBody):
     return JSONResponse(article)
 
 
-@app.post("/article/image")
+@app.post("/article/image",response_class=UploadFile)
 async def post_image(requestBody: ImageRequestBody):
     image = gen_image(requestBody.id, requestBody.context)
     #return FileResponse(f'{requestBody.id}.png')
-    
-    #여기서 파이썬 컨트롤러 호출
-    return FileResponse(image)
+
+    return FileResponse(image,media_type="multipart/form-data")
+    #return Response(content=image, media_type="multipart/form-data")
