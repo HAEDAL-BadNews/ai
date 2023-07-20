@@ -24,7 +24,8 @@ category_dict = {
 def get_articles(category):
     base_url = "https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1="
 
-    category_code = category_dict[category]
+    #category_code = category_dict[category]
+    category_code = '100'
     response = requests.get(f"{base_url}{category_code}", headers=headers)
     html_text = response.text
     soup = bs(html_text, 'html.parser')
@@ -38,7 +39,7 @@ def get_articles(category):
             'title': news_titles[i].text,
             'url': news_titles[i].attrs['href'],
             'author': news_authors[i].text,
-            'category': category_dict[category_code],
+            'category': '정치',
         }
         news.append(news_object)
 
