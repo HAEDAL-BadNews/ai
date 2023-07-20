@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup as bs
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from summarize.huggingface import summarize_context
+import keyword_naitive
 
 
 headers = requests.utils.default_headers()
@@ -60,7 +61,20 @@ def get_articles():
         # print(news[i])
         # text 긁어와도 요약에 문제없음
 
+    # 각 뉴스기사 키워드 추출
+    driver = keyword_naitive.init_keyword_naitive()
+    for i in range(len):
+        # 매개변수로 요약본 전달
+        keyword_text = keyword_naitive.get_keyword_naitive(driver, news[i]['context'])
+        keywords = keyword_text.split(',')
+        keywords = keywords[:5]
+
+        news[i]['keyword'] = keywords
+    keyword_naitive.quit_keyword_naitive(driver)
     
+    for i in range(len):
+        print(news[i])
+        print()
     return news
 
 get_articles()
