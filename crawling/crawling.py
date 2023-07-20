@@ -13,18 +13,18 @@ headers.update(
 )
 
 category_dict = {
-    '100': '정치',
-    '101': '경제',
-    '102': '사회',
-    '103': '생활/문화',
-    '104': '세계',
-    '105': 'IT/과학'
+    '정치':'100',
+    '경제':'101',
+    '사회':'102',
+    '생활/문화':'103',
+    '세계':'104',
+    'IT/과학':'105'
 }
 
-def get_articles():
+def get_articles(category):
     base_url = "https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1="
-    # 카테고리 선택따라 변경 필요
-    category_code = '100'
+
+    category_code = category_dict[category]
     response = requests.get(f"{base_url}{category_code}", headers=headers)
     html_text = response.text
     soup = bs(html_text, 'html.parser')
@@ -59,10 +59,8 @@ def get_articles():
         news_content = summarize_context(news_content)
         news[i]['context'] = news_content
         print(news[i])
+
+        #수정필요
         return(news[i])
-        # text 긁어와도 요약에 문제없음
 
-    
     #return news
-
-get_articles()
