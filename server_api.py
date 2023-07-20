@@ -16,6 +16,7 @@ class ResponseBody(BaseModel):
     date:str
     category:str
     userId:str
+    keyword:list = []
 
 
 class RequestBody(BaseModel):
@@ -42,5 +43,5 @@ async def post_image(requestBody: ImageRequestBody):
     image = gen_image(requestBody.id, requestBody.context)
     #return FileResponse(f'{requestBody.id}.png')
 
-    return FileResponse(image)
+    return FileResponse(image,media_type="multipart/form-data")
     #return Response(content=image, media_type="multipart/form-data")

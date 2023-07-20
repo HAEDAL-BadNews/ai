@@ -1,8 +1,8 @@
 import requests
 from bs4 import BeautifulSoup as bs
 import sys, os
+import crawling.keyword_naitive
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-import keyword_naitive
 from summarize.huggingface import summarize_context
 
 headers = requests.utils.default_headers()
@@ -63,16 +63,17 @@ def get_articles(category: str):
         #print(news[i])
 
         #수정필요
-        #return(news[i])
+        news[i]['keyword'] = ['파이썬','자바','코틀린']
+        return(news[i])
 
 
     # 키워드
-    driver = keyword_naitive.init_keyword_naitive()
+    driver = crawling.keyword_naitive.init_keyword_naitive()
     for i in range(len):
-        keyword_text = keyword_naitive.get_keyword_naitive(driver, news[i]['context'])
+        keyword_text = crawling.keyword_naitive.get_keyword_naitive(driver, news[i]['context'])
         keyword = keyword_text.split(',')
         news[i]['keyword'] = keyword[:5]
-    keyword_naitive.quit_keyword_naitive(driver)
+    crawling.keyword_naitive.quit_keyword_naitive(driver)
 
     
     '''
@@ -82,6 +83,6 @@ def get_articles(category: str):
         print(news[i])
         print()
     
-    #return news
+    #return news[0]
 
 get_articles('IT/과학')
