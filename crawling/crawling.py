@@ -84,4 +84,63 @@ def get_articles(category: str):
     
     return news[0]
 
-#get_articles("정치")
+
+
+
+
+
+def get_one_article(category: str):
+    base_url = "https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1="
+
+    category_code = category_dict[category]
+    response = requests.get(f"{base_url}{category_code}", headers=headers)
+    html_text = response.text
+    soup = bs(html_text, 'html.parser')
+
+
+
+    news_titles = soup.select('a.sh_text_headline')
+    news_authors = soup.select('div.sh_text_press')
+    
+    news_object = {
+        'title': news_titles[0].text,
+        'url': news_titles[0].attrs['href'],
+        'author': news_authors[0].text,
+        'category': category,
+    }
+    news = news_object
+
+
+    print("페이지 기사 얻어오기")
+    # 각 기사 페이지 접근
+    driver = keyword_naitive.init_keyword_naitive()
+    
+    base_url = news['url']
+    response = requests.get(base_url, headers=headers)
+    html_text = response.text
+    soup = bs(html_text, 'html.parser')
+
+    news_date = soup.select_one(
+        'span._ARTICLE_DATE_TIME').attrs['data-date-time']
+        
+    news['date'] = news_date[0:10]
+
+    news_content = soup.select_one('#dic_area').text
+    print("요약")
+    news_content = summarize_context(news_content)
+    news['context'] = news_content
+
+
+    #수정필요
+    news['keywords'] = ['파이썬','자바','코틀린']
+    keyword_text = keyword_naitive.get_keyword_naitive(driver, news['context'])
+    keyword = keyword_text.split(',')
+    news['keywords'] = keyword[:5]
+
+    
+
+    # 키워드
+    keyword_naitive.quit_keyword_naitive(driver)
+
+    print(news)
+    return news

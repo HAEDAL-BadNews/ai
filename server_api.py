@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from starlette.responses import JSONResponse,FileResponse,Response
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from crawling.crawling import get_articles
+from crawling.crawling import get_articles,get_one_article
 from crawling.image import gen_image
 
 app = FastAPI()
@@ -28,20 +28,21 @@ class ImageRequestBody(BaseModel):
     id:int
 
 class ImageResponseBody(BaseModel):
-    image:UploadFile
+    path:str
     id:int
 
 
 @app.post("/article/save", response_model=ResponseBody)
 async def post_articles(requestBody: RequestBody):
-    article = get_articles(requestBody.category)
+    article = get_one_article(requestBody.category)
     return JSONResponse(article)
 
 
-@app.post("/article/image",response_class=UploadFile)
+@app.post("/article/image",response_model=ImageResponseBody)
 async def post_image(requestBody: ImageRequestBody):
     image = gen_image(requestBody.id, requestBody.context)
     #return FileResponse(f'{requestBody.id}.png')
 
-    return FileResponse(image,media_type="multipart/form-data")
+    #return FileResponse(image,media_type="multipart/form-data")
     #return Response(content=image, media_type="multipart/form-data")
+    return JSONResponse(image)
