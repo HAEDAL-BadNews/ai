@@ -1,8 +1,11 @@
 import requests
 from bs4 import BeautifulSoup as bs
-import sys, os
+import sys
+import os
+# import keyword_naitive
 import crawling.keyword_naitive as keyword_naitive
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+# from huggingface import summarize_context
 from summarize.huggingface import summarize_context
 
 headers = requests.utils.default_headers()
@@ -13,13 +16,14 @@ headers.update(
 )
 
 category_dict = {
-    '정치':'100',
-    '경제':'101',
-    '사회':'102',
-    '생활/문화':'103',
-    '세계':'104',
-    'IT/과학':'105'
+    '정치': '100',
+    '경제': '101',
+    '사회': '102',
+    '생활/문화': '103',
+    '세계': '104',
+    'IT/과학': '105'
 }
+
 
 def get_articles(category: str):
     base_url = "https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1="
@@ -42,11 +46,9 @@ def get_articles(category: str):
         }
         news.append(news_object)
 
-
     print("페이지 기사 얻어오기")
     # 각 기사 페이지 접근
-    driver = keyword_naitive.init_keyword_naitive()
-    
+
     for i in range(len):
         base_url = news[i]['url']
         response = requests.get(base_url, headers=headers)
@@ -55,7 +57,7 @@ def get_articles(category: str):
 
         news_date = soup.select_one(
             'span._ARTICLE_DATE_TIME').attrs['data-date-time']
-        
+
         news[i]['date'] = news_date[0:10]
 
         news_content = soup.select_one('#dic_area').text
@@ -63,33 +65,26 @@ def get_articles(category: str):
         news_content = summarize_context(news_content)
         news[i]['context'] = news_content
 
-
-        #수정필요
-        news[i]['keywords'] = ['파이썬','자바','코틀린']
-        keyword_text = keyword_naitive.get_keyword_naitive(driver, news[i]['context'])
+        # 수정필요
+        driver = keyword_naitive.init_keyword_naitive()
+        keyword_text = keyword_naitive.get_keyword_naitive(
+            driver, news[i]['context'])
         keyword = keyword_text.split(',')
         news[i]['keywords'] = keyword[:5]
 
-        
-        return(news[i])
-
+        return (news[i])
 
     # 키워드
     keyword_naitive.quit_keyword_naitive(driver)
 
-    
     for i in range(len):
         print(news[i])
         print()
-    
+
     return news[0]
 
 
-
-
-
-
-def get_one_article(category: str, userId:str):
+def get_one_article(category: str, userId: str):
     base_url = "https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1="
 
     category_code = category_dict[category]
@@ -97,11 +92,9 @@ def get_one_article(category: str, userId:str):
     html_text = response.text
     soup = bs(html_text, 'html.parser')
 
-
-
     news_titles = soup.select('a.sh_text_headline')
     news_authors = soup.select('div.sh_text_press')
-    
+
     news_object = {
         'title': news_titles[0].text,
         'url': news_titles[0].attrs['href'],
@@ -111,11 +104,8 @@ def get_one_article(category: str, userId:str):
     }
     news = news_object
 
-
     print("페이지 기사 얻어오기")
     # 각 기사 페이지 접근
-    driver = keyword_naitive.init_keyword_naitive()
-    
     base_url = news['url']
     response = requests.get(base_url, headers=headers)
     html_text = response.text
@@ -123,25 +113,31 @@ def get_one_article(category: str, userId:str):
 
     news_date = soup.select_one(
         'span._ARTICLE_DATE_TIME').attrs['data-date-time']
-        
+
     news['date'] = news_date[0:10]
 
     news_content = soup.select_one('#dic_area').text
-    print("요약")
+    news_content_original = str(news_content)
+    print("요약 시작")
     news_content = summarize_context(news_content)
     news['context'] = news_content
+    print("요약 끝")
 
-
-    #수정필요
-    news['keywords'] = ['파이썬','자바','코틀린']
-    keyword_text = keyword_naitive.get_keyword_naitive(driver, news['context'])
-    keyword = keyword_text.split(',')
-    news['keywords'] = keyword[:5]
-
-    
+    print(news_content_original+'\n\n\n')
+    print(news_content+'\n\n\n')
 
     # 키워드
-    keyword_naitive.quit_keyword_naitive(driver)
+    #driver = keyword_naitive.init_keyword_naitive()
+    #########
+    # keyword_text = keyword_naitive.get_keyword_naitive(
+    #     driver, news_content_original)
+    # keyword = keyword_text.split(',')
+    # news['keywords'] = keyword[:5]
+    # keyword_naitive.quit_keyword_naitive(driver)
+    keyword_naitive.whole_sequence(news_content_original)
 
     print(news)
     return news
+
+
+# get_one_article('경제', '123456')
