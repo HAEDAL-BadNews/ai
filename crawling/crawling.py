@@ -89,7 +89,7 @@ def get_articles(category: str):
 
 
 
-def get_one_article(category: str):
+def get_one_article(category: str, userId:str):
     base_url = "https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1="
 
     category_code = category_dict[category]
@@ -107,6 +107,7 @@ def get_one_article(category: str):
         'url': news_titles[0].attrs['href'],
         'author': news_authors[0].text,
         'category': category,
+        'userId': userId,
     }
     news = news_object
 
