@@ -23,11 +23,15 @@ def gen_image(id, search_word):
 
 
     url = driver.current_url
-    save_name = f"{id}.png"
+    save_name = f"C:\images\{id}.png"
     urllib.request.urlretrieve(url, save_name)
 
     
     #os.remove(save_name)
     driver.quit()
-    return save_name
+    result={
+        'id':id,
+        'path':save_name
+    }
+    return result
     
