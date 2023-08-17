@@ -8,6 +8,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 import urllib.request
 import os
+import boto3
+import json
+
+with open('./secret.json') as f:
+    secrets = json.loads(f.read())
+IAM_ACCESS_KEY = secrets["IAM_ACCESS_KEY"]
+IAM_SECRET_KEY = secrets["IAM_SECRET_KEY"]
 
 
 def gen_image(id, search_word):
@@ -28,6 +35,13 @@ def gen_image(id, search_word):
     save_name = f"C:\images\{id}.png"
     urllib.request.urlretrieve(url, save_name)
 
+    s3 = s3_connect()
+
+    try:
+        s3.upload_file(save_name,"badnews-bucket",f"{id}.png")
+    except Exception as e:
+        print(e)
+
     # os.remove(save_name)
     driver.quit()
     result = {
@@ -35,3 +49,20 @@ def gen_image(id, search_word):
         'path': save_name
     }
     return result
+
+
+
+def s3_connect():
+    try:
+        # s3 클라이언트 생성
+        s3 = boto3.client(
+            aws_access_key_id = IAM_ACCESS_KEY,
+            aws_secret_access_key = IAM_SECRET_KEY,
+            service_name="s3",
+            region_name="ap-northeast-2",
+        )
+    except Exception as e:
+        print(e)
+    else:
+        print("s3 bucket connected!") 
+        return s3

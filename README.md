@@ -39,6 +39,7 @@ NLP기술을 이용한 관심 뉴스기사 요약
 - transformers[sentencepiece]
 - requests
 - BeatifulSoup
+- boto3
 
 더 많이 있는데 나중에..적겠음..
 <br>
