@@ -4,7 +4,7 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 WHITESPACE_HANDLER = lambda k: re.sub('\s+', ' ', re.sub('\n+', ' ', k.strip()))
 
 model_name = "csebuetnlp/mT5_multilingual_XLSum"
-tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
+tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False,legacy=False)
 model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 
 def summarize_context(article_text):

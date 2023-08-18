@@ -134,7 +134,8 @@ def get_one_article(category: str, userId: str):
     # keyword = keyword_text.split(',')
     # news['keywords'] = keyword[:5]
     # keyword_naitive.quit_keyword_naitive(driver)
-    keyword_naitive.whole_sequence(news_content_original)
+    # keyword_naitive.whole_sequence(news_content_original)
+    news['keywords'] = ['오늘','날씨',"맑음"]
 
     print(news)
     return news

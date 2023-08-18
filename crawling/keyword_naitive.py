@@ -8,6 +8,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 import time
+import json
+
+with open('./secret.json') as f:
+    secrets = json.loads(f.read())
+LOGIN_ID = secrets["LOGIN_ID"]
+LOGIN_PASSWORD = secrets["LOGIN_PASSWORD"]
 
 global answer_count
 answer_count = 1
@@ -33,9 +39,9 @@ def init_keyword_naitive():
     driver.switch_to.window(driver.window_handles[1])
     driver.implicitly_wait(60)
     driver.find_element(
-        By.XPATH, '//*[@id="loginId--1"]').send_keys('rnjs5540')
+        By.XPATH, '//*[@id="loginId--1"]').send_keys(LOGIN_ID)
     driver.find_element(
-        By.XPATH, '//*[@id="password--2"]').send_keys('dydals7417!')
+        By.XPATH, '//*[@id="password--2"]').send_keys(LOGIN_PASSWORD)
     driver.find_element(
         By.XPATH, '//*[@id="mainContent"]/div/div/form/div[4]/button[1]').click()
     driver.switch_to.window(driver.window_handles[0])
