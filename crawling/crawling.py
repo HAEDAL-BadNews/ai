@@ -6,7 +6,7 @@ import os
 import crawling.keyword_naitive as keyword_naitive
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 # from huggingface import summarize_context
-from summarize.huggingface import summarize_context
+###from summarize.huggingface import summarize_context
 
 headers = requests.utils.default_headers()
 headers.update(
@@ -119,7 +119,7 @@ def get_one_article(category: str, userId: str):
     news_content = soup.select_one('#dic_area').text
     news_content_original = str(news_content)
     print("요약 시작")
-    news_content = summarize_context(news_content)
+    # news_content = summarize_context(news_content)
     news['context'] = news_content
     print("요약 끝")
 
