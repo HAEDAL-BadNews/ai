@@ -28,8 +28,13 @@ location = 'ap-northeast-2'
 
 
 def gen_image(id, search_word):
-    chrome_options = Options()
-    chrome_options.add_experimental_option("detach", True)
+    # chrome_options = Options()
+    # chrome_options.add_experimental_option("detach", True)
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    
     driver = webdriver.Chrome(options=chrome_options)
     driver.get("https://pollinations.ai/")
 
