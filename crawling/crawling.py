@@ -6,7 +6,8 @@ import os
 import crawling.keyword_naitive as keyword_naitive
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 # from huggingface import summarize_context
-###from summarize.huggingface import summarize_context
+# from summarize.huggingface import summarize_context
+
 
 headers = requests.utils.default_headers()
 headers.update(
@@ -38,6 +39,7 @@ def get_articles(category: str, userId: str):
 
     news = []
     len = 5
+
     # 카테고리 페이지에서 얻을 수 있는 기본 정보
     for i in range(len):
         news_object = {
@@ -61,18 +63,13 @@ def get_articles(category: str, userId: str):
         news[i]['date'] = news_date[0:10]
 
         news_content = soup.select_one('#dic_area').text
-        # print(f"요약{i}")
-        # news_content = summarize_context(news_content)
-        news[i]['context'] = news_content
+
+        # 요약
+        news[i]['context'] = news_content[:150]
 
         ## 키워드
-        # driver = keyword_naitive.init_keyword_naitive()
-        # keyword_text = keyword_naitive.get_keyword_naitive(driver, news_content)
-        # keyword = keyword_text.split(',')
-        news[i]['keywords'] = [f'{i}번', '오늘', '날씨', '맑음']
+        news[i]['keywords'] = [f'{i+1}번', '오늘', '날씨', '맑음']
 
-    ## keyword_naitive.quit_keyword_naitive(driver)
-    # keyword_naitive.whole_sequence(news_content)
 
     return (news)
 
@@ -97,6 +94,8 @@ def get_one_article(category: str, userId: str):
     }
     news = news_object
 
+    
+
     print("페이지 기사 얻어오기")
     # 각 기사 페이지 접근
     base_url = news['url']
@@ -111,21 +110,21 @@ def get_one_article(category: str, userId: str):
 
     news_content = soup.select_one('#dic_area').text
     news_content_original = str(news_content)
-    print("요약 시작")
+
+    # 요약: pytorch model 서버 램 부족으로 삭제
     # news_content = summarize_context(news_content)
     news['context'] = news_content[:150]
-    print("요약 끝")
 
-    print(news_content_original+'\n\n\n')
-    print(news_content+'\n\n\n')
 
-    # 키워드
-    driver = keyword_naitive.init_keyword_naitive()
-    #########
-    keyword_text  = keyword_naitive.get_keyword_naitive(driver, news_content_original)
-    keyword = keyword_text.split(',')
-    news['keywords'] = keyword[:5]
-    keyword_naitive.whole_sequence(news_content_original)
+
+    # 키워드 : ec2 chrome 설치문제로 실행안됨
+    # driver = keyword_naitive.init_keyword_naitive()
+    # keyword_text  = keyword_naitive.get_keyword_naitive(driver, news_content_original)
+    # keyword = keyword_text.split(',')
+    # news['keywords'] = keyword[:5]
+    # keyword_naitive.whole_sequence(news_content_original)
+
+
     news['keywords'] = ['오늘','날씨',"맑음"]
 
     print(news)
