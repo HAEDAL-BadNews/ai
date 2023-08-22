@@ -94,7 +94,7 @@ def whole_sequence(article: str):
     chrome_options = Options()
     chrome_options.add_experimental_option("detach", True)
     # 백그라운드
-    # chrome_options.add_argument("headless")
+    #chrome_options.add_argument("headless")
     driver = webdriver.Chrome(options=chrome_options)
     driver.get("https://www.native.me/chat")
 
@@ -107,9 +107,9 @@ def whole_sequence(article: str):
     driver.switch_to.window(driver.window_handles[1])
     driver.implicitly_wait(60)
     driver.find_element(
-        By.XPATH, '//*[@id="loginId--1"]').send_keys('rnjs5540')
+        By.XPATH, '//*[@id="loginId--1"]').send_keys(LOGIN_ID)
     driver.find_element(
-        By.XPATH, '//*[@id="password--2"]').send_keys('dydals7417!')
+        By.XPATH, '//*[@id="password--2"]').send_keys(LOGIN_PASSWORD)
     driver.find_element(
         By.XPATH, '//*[@id="mainContent"]/div/div/form/div[4]/button[1]').click()
     driver.switch_to.window(driver.window_handles[0])
@@ -136,11 +136,11 @@ def whole_sequence(article: str):
     keywords = keywords_element.get_attribute('innerText')
     print(keywords)
 
-    #driver.find_element(By.XPATH, '//*[@id="__next"]/div/main/div[2]/div[2]/div[3]/div/div/div/form/div/textarea').send_keys(
-#        '내가 이제 물어보는 기사의 키워드를 3~5개정도 추출해줘. 쓸데없는 말 없이 키워드만. 각 키워드는 쉼표로 구분해.\n')
+    driver.find_element(By.XPATH, '//*[@id="__next"]/div/main/div[2]/div[2]/div[3]/div/div/div/form/div/textarea').send_keys(
+        '내가 이제 물어보는 기사의 키워드를 3~5개정도 추출해줘. 쓸데없는 말 없이 키워드만. 각 키워드는 쉼표로 구분해.\n')
     
-    #WebDriverWait(driver, 30).until(EC.element_to_be_clickable(
-     #   (By.XPATH, '//*[@id="__next"]/div/main/div[2]/div[2]/div[3]/div/div/div/form/div/button')))
+    WebDriverWait(driver, 30).until(EC.element_to_be_clickable(
+        (By.XPATH, '//*[@id="__next"]/div/main/div[2]/div[2]/div[3]/div/div/div/form/div/button')))
 
     """
     셀레니움 종료

@@ -25,7 +25,7 @@ category_dict = {
 }
 
 
-def get_articles(category: str):
+def get_articles(category: str, userId: str):
     base_url = "https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1="
 
     category_code = category_dict[category]
@@ -33,55 +33,48 @@ def get_articles(category: str):
     html_text = response.text
     soup = bs(html_text, 'html.parser')
 
-    news = []
-    len = 5
     news_titles = soup.select('a.sh_text_headline')
     news_authors = soup.select('div.sh_text_press')
+
+    news = []
+    len = 5
+    # 카테고리 페이지에서 얻을 수 있는 기본 정보
     for i in range(len):
         news_object = {
             'title': news_titles[i].text,
             'url': news_titles[i].attrs['href'],
             'author': news_authors[i].text,
             'category': category,
+            'userId': userId,
         }
         news.append(news_object)
 
     print("페이지 기사 얻어오기")
     # 각 기사 페이지 접근
-
     for i in range(len):
         base_url = news[i]['url']
         response = requests.get(base_url, headers=headers)
         html_text = response.text
         soup = bs(html_text, 'html.parser')
 
-        news_date = soup.select_one(
-            'span._ARTICLE_DATE_TIME').attrs['data-date-time']
-
+        news_date = soup.select_one('span._ARTICLE_DATE_TIME').attrs['data-date-time']
         news[i]['date'] = news_date[0:10]
 
         news_content = soup.select_one('#dic_area').text
-        print(f"요약{i}")
-        news_content = summarize_context(news_content)
+        # print(f"요약{i}")
+        # news_content = summarize_context(news_content)
         news[i]['context'] = news_content
 
-        # 수정필요
-        driver = keyword_naitive.init_keyword_naitive()
-        keyword_text = keyword_naitive.get_keyword_naitive(
-            driver, news[i]['context'])
-        keyword = keyword_text.split(',')
-        news[i]['keywords'] = keyword[:5]
+        ## 키워드
+        # driver = keyword_naitive.init_keyword_naitive()
+        # keyword_text = keyword_naitive.get_keyword_naitive(driver, news_content)
+        # keyword = keyword_text.split(',')
+        news[i]['keywords'] = [f'{i}번', '오늘', '날씨', '맑음']
 
-        return (news[i])
+    ## keyword_naitive.quit_keyword_naitive(driver)
+    # keyword_naitive.whole_sequence(news_content)
 
-    # 키워드
-    keyword_naitive.quit_keyword_naitive(driver)
-
-    for i in range(len):
-        print(news[i])
-        print()
-
-    return news[0]
+    return (news)
 
 
 def get_one_article(category: str, userId: str):
@@ -127,14 +120,12 @@ def get_one_article(category: str, userId: str):
     print(news_content+'\n\n\n')
 
     # 키워드
-    #driver = keyword_naitive.init_keyword_naitive()
+    driver = keyword_naitive.init_keyword_naitive()
     #########
-    # keyword_text = keyword_naitive.get_keyword_naitive(
-    #     driver, news_content_original)
-    # keyword = keyword_text.split(',')
-    # news['keywords'] = keyword[:5]
-    # keyword_naitive.quit_keyword_naitive(driver)
-    # keyword_naitive.whole_sequence(news_content_original)
+    keyword_text  = keyword_naitive.get_keyword_naitive(driver, news_content_original)
+    keyword = keyword_text.split(',')
+    news['keywords'] = keyword[:5]
+    keyword_naitive.whole_sequence(news_content_original)
     news['keywords'] = ['오늘','날씨',"맑음"]
 
     print(news)
