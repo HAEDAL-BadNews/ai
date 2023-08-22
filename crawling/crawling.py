@@ -113,7 +113,7 @@ def get_one_article(category: str, userId: str):
     news_content_original = str(news_content)
     print("요약 시작")
     # news_content = summarize_context(news_content)
-    news['context'] = news_content
+    news['context'] = news_content[:150]
     print("요약 끝")
 
     print(news_content_original+'\n\n\n')

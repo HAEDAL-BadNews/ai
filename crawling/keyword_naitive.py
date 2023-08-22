@@ -23,8 +23,12 @@ def init_keyword_naitive():
     """
     백그라운드에 셀레니움 실행 (최초 1회)
     """
-    chrome_options = Options()
-    chrome_options.add_experimental_option("detach", True)
+    # chrome_options = Options()
+    # chrome_options.add_experimental_option("detach", True)
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
     # 백그라운드
     # chrome_options.add_argument("headless")
     driver = webdriver.Chrome(options=chrome_options)
@@ -91,8 +95,13 @@ def quit_keyword_naitive(driver: webdriver):
 
 
 def whole_sequence(article: str):
-    chrome_options = Options()
-    chrome_options.add_experimental_option("detach", True)
+    # chrome_options = Options()
+    # chrome_options.add_experimental_option("detach", True)
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    
     # 백그라운드
     #chrome_options.add_argument("headless")
     driver = webdriver.Chrome(options=chrome_options)
