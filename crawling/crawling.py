@@ -62,10 +62,38 @@ def get_articles(category: str, userId: str):
         news_date = soup.select_one('span._ARTICLE_DATE_TIME').attrs['data-date-time']
         news[i]['date'] = news_date[0:10]
 
-        news_content = soup.select_one('#dic_area').text
+
+        # 본문 - 기사 위쪽 굵은글씨 문단 추출 및 제거
+        naver_summary_selecors = ['#dic_area > b', '#dic_area > strong', '#dic_area > div']
+        for selector in naver_summary_selecors:
+            naver_summary = soup.select_one(selector)
+            if naver_summary:
+                naver_summary.extract()
+                break
+        strong_tags = soup.find_all('strong')
+        for strong_tag in strong_tags:
+            strong_tag.extract()
+
+        # 본문 - 이미지 설명 추출 및 제거
+        image_desc_selecors = ['#dic_area > span > em', '#dic_area > div > div > span.end_photo_org > em', '#dic_area > div:nth-child(1) > figure > figcaption']
+        for selector in image_desc_selecors:
+            image_desc = soup.select_one(selector)
+            if image_desc:
+                image_desc.extract()
+                break
+        img_desc_elements = soup.select('.img_desc')
+        for img_desc_element in img_desc_elements:
+            img_desc_element.extract()
+        img_desc_elements = soup.find_all('nbd_table')
+        for img_desc_element in img_desc_elements:
+            img_desc_element.extract()
+
+        # 본문 - 개행문자 제거
+        news_content = soup.select_one('#dic_area').text.strip().replace('\n', '')
 
         # 요약
-        news[i]['context'] = news_content[:150]
+        news[i]['context'] = news_content#[:150]
+        # 이래도 600 ~ 1700자 정도 나옴
 
         ## 키워드
         news[i]['keywords'] = [f'{i+1}번', '오늘', '날씨', '맑음']
