@@ -34,7 +34,7 @@ class ImageResponseBody(BaseModel):
 
 @app.post("/article/save", response_model=ResponseBody)
 async def post_articles(requestBody: RequestBody):
-    article = get_articles(requestBody.category, requestBody.userId)
+    article = get_one_article(requestBody.category, requestBody.userId)
     return JSONResponse(article)
 
 
