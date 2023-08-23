@@ -1,12 +1,14 @@
 import requests
 from bs4 import BeautifulSoup as bs
+from random import sample
 import sys
 import os
 # import keyword_naitive
 import crawling.keyword_naitive as keyword_naitive
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 # from huggingface import summarize_context
-###from summarize.huggingface import summarize_context
+# from summarize.huggingface import summarize_context
+
 
 headers = requests.utils.default_headers()
 headers.update(
@@ -38,6 +40,7 @@ def get_articles(category: str, userId: str):
 
     news = []
     len = 5
+
     # 카테고리 페이지에서 얻을 수 있는 기본 정보
     for i in range(len):
         news_object = {
@@ -60,19 +63,42 @@ def get_articles(category: str, userId: str):
         news_date = soup.select_one('span._ARTICLE_DATE_TIME').attrs['data-date-time']
         news[i]['date'] = news_date[0:10]
 
-        news_content = soup.select_one('#dic_area').text
-        # print(f"요약{i}")
-        # news_content = summarize_context(news_content)
-        news[i]['context'] = news_content
+
+        # 본문 - 기사 위쪽 굵은글씨 문단 추출 및 제거
+        naver_summary_selecors = ['#dic_area > b', '#dic_area > strong', '#dic_area > div']
+        for selector in naver_summary_selecors:
+            naver_summary = soup.select_one(selector)
+            if naver_summary:
+                naver_summary.extract()
+                break
+        strong_tags = soup.find_all('strong')
+        for strong_tag in strong_tags:
+            strong_tag.extract()
+
+        # 본문 - 이미지 설명 추출 및 제거
+        image_desc_selecors = ['#dic_area > span > em', '#dic_area > div > div > span.end_photo_org > em', '#dic_area > div:nth-child(1) > figure > figcaption']
+        for selector in image_desc_selecors:
+            image_desc = soup.select_one(selector)
+            if image_desc:
+                image_desc.extract()
+                break
+        img_desc_elements = soup.select('.img_desc')
+        for img_desc_element in img_desc_elements:
+            img_desc_element.extract()
+        img_desc_elements = soup.find_all('nbd_table')
+        for img_desc_element in img_desc_elements:
+            img_desc_element.extract()
+
+        # 본문 - 개행문자 제거
+        news_content = soup.select_one('#dic_area').text.strip().replace('\n', '')
+
+        # 요약
+        news[i]['context'] = news_content[:150]
+        # 이래도 600 ~ 1700자 정도 나옴
 
         ## 키워드
-        # driver = keyword_naitive.init_keyword_naitive()
-        # keyword_text = keyword_naitive.get_keyword_naitive(driver, news_content)
-        # keyword = keyword_text.split(',')
-        news[i]['keywords'] = [f'{i}번', '오늘', '날씨', '맑음']
+        news[i]['keywords'] = [f'{i+1}번', '오늘', '날씨', '맑음']
 
-    ## keyword_naitive.quit_keyword_naitive(driver)
-    # keyword_naitive.whole_sequence(news_content)
 
     return (news)
 
@@ -97,6 +123,8 @@ def get_one_article(category: str, userId: str):
     }
     news = news_object
 
+    
+
     print("페이지 기사 얻어오기")
     # 각 기사 페이지 접근
     base_url = news['url']
@@ -109,27 +137,66 @@ def get_one_article(category: str, userId: str):
 
     news['date'] = news_date[0:10]
 
-    news_content = soup.select_one('#dic_area').text
-    news_content_original = str(news_content)
-    print("요약 시작")
+
+    # 본문 - 기사 위쪽 굵은글씨 문단 추출 및 제거
+    naver_summary_selecors = ['#dic_area > b', '#dic_area > strong', '#dic_area > div']
+    for selector in naver_summary_selecors:
+        naver_summary = soup.select_one(selector)
+        if naver_summary:
+            naver_summary.extract()
+            break
+    strong_tags = soup.find_all('strong')
+    for strong_tag in strong_tags:
+        strong_tag.extract()
+
+
+    # 본문 - 이미지 설명 추출 및 제거
+    image_desc_selecors = ['#dic_area > span > em', '#dic_area > div > div > span.end_photo_org > em', '#dic_area > div:nth-child(1) > figure > figcaption']
+    for selector in image_desc_selecors:
+        image_desc = soup.select_one(selector)
+        if image_desc:
+            image_desc.extract()
+            break
+    img_desc_elements = soup.select('.img_desc')
+    for img_desc_element in img_desc_elements:
+        img_desc_element.extract()
+    img_desc_elements = soup.find_all('nbd_table')
+    for img_desc_element in img_desc_elements:
+        img_desc_element.extract()
+
+    # 본문 - 개행문자 제거 추가
+    news_content = soup.select_one('#dic_area').text.strip().replace('\n', '').replace('\\', '')
+    
+    
+
+    # 요약: pytorch model 서버 램 부족으로 삭제
     # news_content = summarize_context(news_content)
     news['context'] = news_content[:150]
-    print("요약 끝")
 
-    print(news_content_original+'\n\n\n')
-    print(news_content+'\n\n\n')
 
-    # 키워드
-    driver = keyword_naitive.init_keyword_naitive()
-    #########
-    keyword_text  = keyword_naitive.get_keyword_naitive(driver, news_content_original)
-    keyword = keyword_text.split(',')
-    news['keywords'] = keyword[:5]
-    keyword_naitive.whole_sequence(news_content_original)
-    news['keywords'] = ['오늘','날씨',"맑음"]
+
+    # 키워드 : ec2 chrome 설치문제로 실행안됨
+    # news_content_original = str(news_content)
+    # driver = keyword_naitive.init_keyword_naitive()
+    # keyword_text  = keyword_naitive.get_keyword_naitive(driver, news_content_original)
+    # keyword = keyword_text.split(',')
+    # news['keywords'] = keyword[:5]
+    # keyword_naitive.whole_sequence(news_content_original)
+
+    
+
+    # 키워드 제목에서 추출하기
+    keyTitle = news_titles[0].text.replace('\n', ' ').replace('\\', ' ').replace('.', ' ')
+    keyTitle = list(map(str,keyTitle.split()))
+    print(keyTitle)
+    idx = sample(range(len(keyTitle)), 5)
+    keywords = []
+    for i in idx:
+        keywords.append(keyTitle[i])
+    news['keywords'] = keywords
 
     print(news)
     return news
 
 
-# get_one_article('경제', '123456')
+

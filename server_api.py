@@ -23,31 +23,23 @@ class RequestBody(BaseModel):
     userId:str
     category:str
 
-# class ImageRequestBody(BaseModel):
-#     context:str
-#     id:int
+class ImageRequestBody(BaseModel):
+    context:str
+    id:int
 
-# class ImageResponseBody(BaseModel):
-#     path:str
-#     id:int
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+class ImageResponseBody(BaseModel):
+    path:str
+    id:int
 
 
 @app.post("/article/save", response_model=ResponseBody)
 async def post_articles(requestBody: RequestBody):
-    articles = get_articles(requestBody.category, requestBody.userId)
-    return JSONResponse(articles)
+    article = get_one_article(requestBody.category, requestBody.userId)
+    return JSONResponse(article)
 
 
-# 기능 삭제
-# @app.post("/article/image",response_model=ImageResponseBody)
-# async def post_image(requestBody: ImageRequestBody):
-#     image = gen_image(requestBody.id, requestBody.context)
-#     #return FileResponse(f'{requestBody.id}.png')
+@app.post("/article/image",response_model=ImageResponseBody)
+async def post_image(requestBody: ImageRequestBody):
+    image = gen_image(requestBody.id, requestBody.context)
 
-#     #return FileResponse(image,media_type="multipart/form-data")
-#     #return Response(content=image, media_type="multipart/form-data")
-#     return JSONResponse(image)
+    return JSONResponse(image)
