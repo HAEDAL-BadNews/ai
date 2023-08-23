@@ -125,7 +125,6 @@ def get_one_article(category: str, userId: str):
 
     
 
-    print("페이지 기사 얻어오기")
     # 각 기사 페이지 접근
     base_url = news['url']
     response = requests.get(base_url, headers=headers)
@@ -188,7 +187,7 @@ def get_one_article(category: str, userId: str):
     # 키워드 제목에서 추출하기
     keyTitle = news_titles[0].text.replace('\n', ' ').replace('\\', ' ').replace('.', ' ')
     keyTitle = list(map(str,keyTitle.split()))
-    print(keyTitle)
+
     idx = sample(range(len(keyTitle)), 5)
     keywords = []
     for i in idx:
