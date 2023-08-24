@@ -39,10 +39,10 @@ def get_articles(category: str, userId: str):
     news_authors = soup.select('div.sh_text_press')
 
     news = []
-    len = 5
+    article_num = 5
 
     # 카테고리 페이지에서 얻을 수 있는 기본 정보
-    for i in range(len):
+    for i in range(article_num):
         news_object = {
             'title': news_titles[i].text,
             'url': news_titles[i].attrs['href'],
@@ -54,7 +54,7 @@ def get_articles(category: str, userId: str):
 
     print("페이지 기사 얻어오기")
     # 각 기사 페이지 접근
-    for i in range(len):
+    for i in range(article_num):
         base_url = news[i]['url']
         response = requests.get(base_url, headers=headers)
         html_text = response.text
@@ -62,7 +62,6 @@ def get_articles(category: str, userId: str):
 
         news_date = soup.select_one('span._ARTICLE_DATE_TIME').attrs['data-date-time']
         news[i]['date'] = news_date[0:10]
-
 
         # 본문 - 기사 위쪽 굵은글씨 문단 추출 및 제거
         naver_summary_selecors = ['#dic_area > b', '#dic_area > strong', '#dic_area > div']
@@ -76,7 +75,8 @@ def get_articles(category: str, userId: str):
             strong_tag.extract()
 
         # 본문 - 이미지 설명 추출 및 제거
-        image_desc_selecors = ['#dic_area > span > em', '#dic_area > div > div > span.end_photo_org > em', '#dic_area > div:nth-child(1) > figure > figcaption']
+        image_desc_selecors = ['#dic_area > span > em', '#dic_area > div > div > span.end_photo_org > em',
+                               '#dic_area > div:nth-child(1) > figure > figcaption']
         for selector in image_desc_selecors:
             image_desc = soup.select_one(selector)
             if image_desc:
@@ -89,15 +89,23 @@ def get_articles(category: str, userId: str):
         for img_desc_element in img_desc_elements:
             img_desc_element.extract()
 
-        # 본문 - 개행문자 제거
-        news_content = soup.select_one('#dic_area').text.strip().replace('\n', '')
+        # 본문 - 개행문자 제거 추가
+        news_content = soup.select_one('#dic_area').text.strip().replace('\n', '').replace('\\', '')
 
         # 요약
         news[i]['context'] = news_content[:150]
         # 이래도 600 ~ 1700자 정도 나옴
 
-        ## 키워드
-        news[i]['keywords'] = [f'{i+1}번', '오늘', '날씨', '맑음']
+        # 키워드 제목에서 추출하기
+        keyTitle = news_titles[i].text.replace('\n', ' ').replace('\\', ' ').replace('.', ' ')\
+            .replace(',',' ').replace('\'', ' ')
+        keyTitle = list(map(str, keyTitle.split()))
+
+        keyword_idx = sample(range(len(keyTitle)), 5)
+        keywords = []
+        for j in keyword_idx:
+            keywords.append(keyTitle[j])
+        news[i]['keywords'] = keywords
 
 
     return (news)
@@ -185,7 +193,7 @@ def get_one_article(category: str, userId: str):
     
 
     # 키워드 제목에서 추출하기
-    keyTitle = news_titles[0].text.replace('\n', ' ').replace('\\', ' ').replace('.', ' ')
+    keyTitle = news_titles[0].text.replace('\n', ' ').replace('\\', ' ').replace('.', ' ').replace(',', ' ').replace('\'', ' ')
     keyTitle = list(map(str,keyTitle.split()))
 
     idx = sample(range(len(keyTitle)), 5)
