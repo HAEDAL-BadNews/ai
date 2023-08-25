@@ -38,6 +38,7 @@ def get_articles(category: str, userId: str):
 
     news_titles = soup.select('a.sh_text_headline')
     news_authors = soup.select('div.sh_text_press')
+    news_images = soup.select('div.sh_thumb_inner')
 
     news = []
     article_num = 5
@@ -50,6 +51,7 @@ def get_articles(category: str, userId: str):
             'author': news_authors[i].text,
             'category': category,
             'userId': userId,
+            'image': news_images[i].find('img').attrs['src'],
         }
         news.append(news_object)
 
@@ -61,6 +63,7 @@ def get_articles(category: str, userId: str):
         html_text = response.text
         soup = bs(html_text, 'html.parser')
 
+        # date
         news_date = soup.select_one('span._ARTICLE_DATE_TIME').attrs['data-date-time']
         news[i]['date'] = news_date[0:10]
 
@@ -121,6 +124,7 @@ def get_one_article(category: str, userId: str):
 
     news_titles = soup.select('a.sh_text_headline')
     news_authors = soup.select('div.sh_text_press')
+    news_images = soup.select('div.sh_thumb_inner')
 
     news_object = {
         'title': news_titles[0].text,
@@ -128,6 +132,7 @@ def get_one_article(category: str, userId: str):
         'author': news_authors[0].text,
         'category': category,
         'userId': userId,
+        'image': news_images[0].find('img').attrs['src'],
     }
     news = news_object
 
