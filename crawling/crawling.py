@@ -51,7 +51,8 @@ def get_articles(category: str, userId: str):
             'author': news_authors[i].text,
             'category': category,
             'userId': userId,
-            'image': news_images[i].find('img').attrs['src'],
+            'image': {"id":0,
+                  "path":news_images[0].find('img').attrs['src']}
         }
         news.append(news_object)
 
@@ -132,7 +133,8 @@ def get_one_article(category: str, userId: str):
         'author': news_authors[0].text,
         'category': category,
         'userId': userId,
-        'image': news_images[0].find('img').attrs['src'],
+        'image': {"id":"000",
+                  "path":news_images[0].find('img').attrs['src']}
     }
     news = news_object
 
