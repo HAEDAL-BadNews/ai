@@ -52,11 +52,12 @@ def get_sport_articles(userId:str):
     for i in range(5):
         news = news_s[i]
         news_title = news.select("strong.title")[0].text
-        news_image = news.select("div.image_area")[0].find('img').attrs['src']
+        # news_image = news.select("div.image_area")[0].find('img').attrs['src'] --> 제대로 가는데 왜 안되지..
         news_url = base_url + news.select("a.link_today")[0].attrs['href']
         news_author = news.select("div.information > span")[0].text
         news_keyword = []
         news_keyword.append(news.select("div.information > span")[1].text)
+        
         
         each_response = requests.get(news_url, headers=headers)
         html_text = each_response.text
@@ -64,7 +65,10 @@ def get_sport_articles(userId:str):
         
         news_date = soup.select("div.info > span")[0].text
         news_context = soup.select("#newsEndContents")[0].text
-        
+
+        # 기사 안에 들어가는거라 사진이 없을 수도 있음 그럼 큰일인데..
+        news_image = soup.select("span.end_photo_org > img")[0].attrs['src']
+
         
 
 
@@ -95,3 +99,4 @@ def get_sport_articles(userId:str):
 
     return result
 
+get_sport_articles("sportImg")
