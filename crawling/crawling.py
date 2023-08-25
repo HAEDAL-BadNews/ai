@@ -132,7 +132,7 @@ def get_one_article(category: str, userId: str):
         'author': news_authors[0].text,
         'category': category,
         'userId': userId,
-        'image': {"id":"000",
+        'image': {"id":0,
                   "path":news_images[0].find('img').attrs['src']}
     }
     news = news_object
@@ -184,14 +184,14 @@ def get_one_article(category: str, userId: str):
     # 키워드 제목에서 추출하기
     keyTitle = news_titles[0].text.replace('\n', ' ').replace('\\', ' ').replace('.', ' ')
     keyTitle = list(map(str, keyTitle.split()))
-    print(keyTitle)
+ 
     idx = sample(range(len(keyTitle)), min(5, len(keyTitle)))
     keywords = []
     for i in idx:
         keywords.append(keyTitle[i])
     news['keywords'] = keywords
 
-    print(news)
+
     return news
 
 
