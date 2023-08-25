@@ -61,7 +61,8 @@ def get_articles(category: str, userId: str):
         soup = bs(html_text, 'html.parser')
 
         news_date = soup.select_one('span._ARTICLE_DATE_TIME').attrs['data-date-time']
-        news[i]['date'] = news_date[0:10]
+
+        news[i]['date'] = news_date
 
         # 본문 - 기사 위쪽 굵은글씨 문단 추출 및 제거
         naver_summary_selecors = ['#dic_area > b', '#dic_area > strong', '#dic_area > div']
