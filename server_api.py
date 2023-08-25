@@ -17,7 +17,6 @@ class ResponseBody(BaseModel):
     category:str
     userId:str
     keywords:list = []
-    image: str
 
 
 class RequestBody(BaseModel):
