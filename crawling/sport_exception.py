@@ -84,7 +84,7 @@ def get_sport_articles(userId:str):
             "date": news_date,
             "category": "스포츠",
             "userId": userId ,
-            "keyword": news_keyword,
+            "keywords": news_keyword,
             "image": {"id": 0,
                       "path": news_image}
         }
