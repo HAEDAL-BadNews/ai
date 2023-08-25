@@ -8,6 +8,16 @@ from crawling.image import gen_image
 
 app = FastAPI()
 
+
+class ImageRequestBody(BaseModel):
+    context:str
+    id:int
+
+class ImageResponseBody(BaseModel):
+    path:str
+    id:int
+
+
 class ResponseBody(BaseModel):
     title:str
     context:str
@@ -17,19 +27,14 @@ class ResponseBody(BaseModel):
     category:str
     userId:str
     keywords:list = []
+    image:ImageResponseBody
 
 
 class RequestBody(BaseModel):
     userId:str
     category:str
 
-class ImageRequestBody(BaseModel):
-    context:str
-    id:int
 
-class ImageResponseBody(BaseModel):
-    path:str
-    id:int
 
 
 @app.post("/article/save", response_model=ResponseBody)
