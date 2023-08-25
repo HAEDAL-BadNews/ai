@@ -52,7 +52,7 @@ def get_articles(category: str, userId: str):
             'category': category,
             'userId': userId,
             'image': {"id":0,
-                  "path":news_images[0].find('img').attrs['src']}
+                  "path":news_images[i].find('img').attrs['src']}
         }
         news.append(news_object)
 
