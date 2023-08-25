@@ -92,7 +92,7 @@ def get_articles(category: str, userId: str):
 
         # 본문 - 개행문자 제거 추가
         news_content = soup.select_one('#dic_area').text.strip().replace('\n', '').replace('\\', '')
-        
+
         # 요약
         news[i]['context'] = news_content[:150]
         # 이래도 600 ~ 1700자 정도 나옴
@@ -191,19 +191,10 @@ def get_one_article(category: str, userId: str):
 
 def get_home_articles(category: str, userId: str):
     base_url = "https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1="
-
     categories = sample(list(category_dict), 5)
 
     news = []
     for category in categories:
-        category_code = category_dict[category]
-        response = requests.get(f"{base_url}{category_code}", headers=headers)
-        html_text = response.text
-        soup = bs(html_text, 'html.parser')
-
-        news_titles = soup.select('a.sh_text_headline')
-        news_authors = soup.select('div.sh_text_press')
-
         news.append(get_one_article(category, userId))
 
     return (news)
