@@ -56,7 +56,6 @@ def get_articles(category: str, userId: str):
         }
         news.append(news_object)
 
-    print("페이지 기사 얻어오기")
     # 각 기사 페이지 접근
     for i in range(article_num):
         base_url = news[i]['url']
@@ -66,7 +65,7 @@ def get_articles(category: str, userId: str):
 
         # date
         news_date = soup.select_one('span._ARTICLE_DATE_TIME').attrs['data-date-time']
-        news[i]['date'] = news_date[0:10]
+        news[i]['date'] = news_date
 
         # 본문 - 기사 위쪽 굵은글씨 문단 추출 및 제거
         naver_summary_selecors = ['#dic_area > b', '#dic_area > strong', '#dic_area > div']
@@ -138,7 +137,7 @@ def get_one_article(category: str, userId: str):
     }
     news = news_object
 
-    print("페이지 기사 얻어오기")
+
     # 각 기사 페이지 접근
     base_url = news['url']
     response = requests.get(base_url, headers=headers)
@@ -148,7 +147,7 @@ def get_one_article(category: str, userId: str):
     news_date = soup.select_one(
         'span._ARTICLE_DATE_TIME').attrs['data-date-time']
 
-    news['date'] = news_date[0:10]
+    news['date'] = news_date
 
     # 본문 - 기사 위쪽 굵은글씨 문단 추출 및 제거
     naver_summary_selecors = ['#dic_area > b', '#dic_area > strong', '#dic_area > div']
