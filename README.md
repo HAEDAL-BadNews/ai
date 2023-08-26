@@ -205,6 +205,30 @@ yarl==1.9.2
 <br>
 <br>
 
+## 로컬 실행방법
+1.레포지토리 clone
+<br>
+`git clone https://github.com/KNU-HAEDAL/BadNews-ai.git`
+<br>
+<br>
+2. 필요한 모듈설치
+<br>
+`pip install -r requirements.txt`
+<br>
+<br>
+3. torch는 따로 설치
+<br>
+`pip install torch==2.0.1`
+<br>
+<br>
+4. 실행
+<br>
+`uvicorn server_api:app --reload --port 8000`
+<br>
+&rarr; http://localhost:8000 으로 실행한다.
+<br>
+<br>
+
 ## branch 설명
 - crawling : 뉴스기사 크롤링을 구현
 - summary : 기사 요약을 구현
