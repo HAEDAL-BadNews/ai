@@ -14,9 +14,9 @@ headers.update(
 )
 
 def parsing_date(date:str):
-
     nalzza = date[5:15]
     nalzza = nalzza.replace(".","-")
+
     if date[17:19]=="오전":
         sigan = date[20:]+":00"
     else:
@@ -52,7 +52,7 @@ def get_sport_articles(userId:str):
     for i in range(5):
         news = news_s[i]
         news_title = news.select("strong.title")[0].text
-        # news_image = news.select("div.image_area")[0].find('img').attrs['src'] --> 제대로 가는데 왜 안되지..
+        #news_image = news.select("div.image_area")[0].find('img').attrs['src'] #--> 제대로 가는데 왜 안되지..
         news_url = base_url + news.select("a.link_today")[0].attrs['href']
         news_author = news.select("div.information > span")[0].text
         news_keyword = []

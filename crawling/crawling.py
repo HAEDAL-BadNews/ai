@@ -38,7 +38,7 @@ def get_articles(category: str, userId: str):
 
     news_titles = soup.select('a.sh_text_headline')
     news_authors = soup.select('div.sh_text_press')
-    news_images = soup.select('div.sh_thumb_inner')
+    #news_images = soup.select('div.sh_thumb_inner')
 
     news = []
     article_num = 5
@@ -51,8 +51,8 @@ def get_articles(category: str, userId: str):
             'author': news_authors[i].text,
             'category': category,
             'userId': userId,
-            'image': {"id":0,
-                  "path":news_images[i].find('img').attrs['src']}
+            #'image': {"id":0,
+                  #"path":news_images[i].find('img').attrs['src']}
         }
         news.append(news_object)
 
@@ -66,6 +66,19 @@ def get_articles(category: str, userId: str):
         # date
         news_date = soup.select_one('span._ARTICLE_DATE_TIME').attrs['data-date-time']
         news[i]['date'] = news_date
+
+        # image
+        news_image = soup.find(id='img1');
+        if news_image:
+            news_image = news_image.get('data-src')
+        else:   # no image
+            news_image = soup.select_one('#contents > div._VOD_PLAYER_WRAP')
+            if news_image:
+                news_image = news_image.attrs['data-cover-image-url']
+            else:   # no video too
+                i -= 1
+        news[i]['image'] = {"id":0,
+                            "path":news_image}
 
         # 본문 - 기사 위쪽 굵은글씨 문단 추출 및 제거
         naver_summary_selecors = ['#dic_area > b', '#dic_area > strong', '#dic_area > div']
@@ -124,7 +137,7 @@ def get_one_article(category: str, userId: str):
 
     news_titles = soup.select('a.sh_text_headline')
     news_authors = soup.select('div.sh_text_press')
-    news_images = soup.select('div.sh_thumb_inner')
+    #news_images = soup.select('div.sh_thumb_inner')
 
     news_object = {
         'title': news_titles[0].text,
@@ -132,11 +145,10 @@ def get_one_article(category: str, userId: str):
         'author': news_authors[0].text,
         'category': category,
         'userId': userId,
-        'image': {"id":0,
-                  "path":news_images[0].find('img').attrs['src']}
+        #'image': {"id":0,
+        #          "path":news_images[0].find('img').attrs['src']}
     }
     news = news_object
-
 
     # 각 기사 페이지 접근
     base_url = news['url']
@@ -148,6 +160,20 @@ def get_one_article(category: str, userId: str):
         'span._ARTICLE_DATE_TIME').attrs['data-date-time']
 
     news['date'] = news_date
+
+    # image
+    news_image = soup.find(id='img1');
+    if news_image:
+        news_image = news_image.get('data-src')
+    else:  # no image
+        news_image = soup.select_one('#contents > div._VOD_PLAYER_WRAP')
+        if news_image:
+            news_image = news_image.attrs['data-cover-image-url']
+        else:  # no video too
+            i -= 1
+    news['image'] = {"id": 0,
+                     "path": news_image}
+
 
     # 본문 - 기사 위쪽 굵은글씨 문단 추출 및 제거
     naver_summary_selecors = ['#dic_area > b', '#dic_area > strong', '#dic_area > div']
