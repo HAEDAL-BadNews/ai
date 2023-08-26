@@ -41,7 +41,8 @@ def get_articles(category: str, userId: str):
     #news_images = soup.select('div.sh_thumb_inner')
 
     news = []
-    article_num = 5
+
+    article_num = min(5, len(news_titles))
 
     # 카테고리 페이지에서 얻을 수 있는 기본 정보
     for i in range(article_num):
