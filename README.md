@@ -218,7 +218,7 @@ yarl==1.9.2
 <br>
 3. torch는 따로 설치
 <br>
-`pip install torch==1.25.2`
+`pip install torch==2.0.1`
 <br>
 <br>
 4. 실행
