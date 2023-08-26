@@ -162,15 +162,18 @@ def get_one_article(category: str, userId: str):
     news['date'] = news_date
 
     # image
-    news_image = soup.find(id='img1');
-    if news_image:
-        news_image = news_image.get('data-src')
-    else:  # no image
-        news_image = soup.select_one('#contents > div._VOD_PLAYER_WRAP')
+    while True:
+        news_image = soup.find(id='img1');
         if news_image:
-            news_image = news_image.attrs['data-cover-image-url']
-        else:  # no video too
-            i -= 1
+            news_image = news_image.get('data-src')
+            break
+        else:  # no image
+            news_image = soup.select_one('#contents > div._VOD_PLAYER_WRAP')
+            if news_image:
+                news_image = news_image.attrs['data-cover-image-url']
+                break
+            else:  # no video too
+                continue
     news['image'] = {"id": 0,
                      "path": news_image}
 
